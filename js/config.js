@@ -1,5 +1,14 @@
 // 全局常量配置
-const PROXY_URL = '/proxy/';    // 适用于 Cloudflare, Netlify (带重写), Vercel (带重写)
+// GitHub Pages 纯静态部署：没有服务端代理，浏览器只能直连「返回 CORS 头」的源。
+// 留空 '' = 直连模式（仅使用下方 API_SITES 中实测支持 CORS 的源）。
+// 若你自建了代理（Cloudflare Worker / Vercel Functions 等），把代理前缀填到这里，
+// 要求其能接收「URL 编码后的目标地址」，例如 'https://your-proxy.workers.dev/?url='。
+const PROXY_URL = '';
+
+// 统一构造实际请求地址：有代理走代理，否则直连
+function buildApiRequestUrl(targetUrl) {
+    return PROXY_URL ? (PROXY_URL + encodeURIComponent(targetUrl)) : targetUrl;
+}
 // const HOPLAYER_URL = 'https://hoplayer.com/index.html';
 const SEARCH_HISTORY_KEY = 'videoSearchHistory';
 const MAX_HISTORY_ITEMS = 5;
@@ -20,134 +29,18 @@ const SITE_CONFIG = {
 };
 
 // API站点配置
+// ⚠️ GitHub Pages 为纯静态托管，浏览器只能直连「响应带 CORS 头」的源。
+// 下列源已实测：HTTPS + Access-Control-Allow-Origin: * + 关键词搜索可用，无需代理。
+// 如需使用更多源（大多数源没有 CORS 头），请自建代理并设置上面的 PROXY_URL。
 const API_SITES = {
-    dyttzy: {
-        api: 'http://caiji.dyttzyapi.com',
-        name: '电影天堂资源',
-        detail: 'http://caiji.dyttzyapi.com',
-    },
-    ruyi: {
-        api: 'https://cj.rycjapi.com',
-        name: '如意资源',
-    },
     bfzy: {
         api: 'https://bfzyapi.com',
         name: '暴风资源',
     },
-    tyyszy: {
-        api: 'https://tyyszy.com',
-        name: '天涯资源',
+    lz: {
+        api: 'https://cj.lziapi.com',
+        name: '量子资源',
     },
-    ffzy: {
-        api: 'http://ffzy5.tv',
-        name: '非凡影视',
-        detail: 'http://ffzy5.tv',
-    },
-    heimuer: {
-        api: 'https://json.heimuer.xyz',
-        name: '黑木耳',
-        detail: 'https://heimuer.tv',
-    },
-    zy360: {
-        api: 'https://360zy.com',
-        name: '360资源',
-    },
-    wolong: {
-        api: 'https://wolongzyw.com',
-        name: '卧龙资源',
-    },
-    hwba: {
-        api: 'https://cjhwba.com',
-        name: '华为吧资源',
-    },
-    jisu: {
-        api: 'https://jszyapi.com',
-        name: '极速资源',
-        detail: 'https://jszyapi.com'
-    },
-    dbzy: {
-        api: 'https://dbzy.com',
-        name: '豆瓣资源',
-    },
-    huya: {
-        api: 'https://www.huyaapi.com',
-        name: '虎牙资源',
-        detail: 'https://www.huyaapi.com',
-    },
-    mozhua: {
-        api: 'https://mozhuazy.com',
-        name: '魔爪资源',
-    },
-    mdzy: {
-        api: 'https://www.mdzyapi.com',
-        name: '魔都资源',
-    },
-    zuid: {
-        api: 'https://api.zuidapi.com',
-        name: '最大资源'
-    },
-    yinghua: {
-        api: 'https://m3u8.apiyhzy.com',
-        name: '樱花资源'
-    },
-    baidu: {
-        api: 'https://api.apibdzy.com',
-        name: '百度云资源'
-    },
-    wujin: {
-        api: 'https://api.wujinapi.me',
-        name: '无尽资源'
-    },
-    wwzy: {
-        api: 'https://wwzy.tv',
-        name: '旺旺短剧'
-    },
-    ikun: {
-        api: 'https://ikunzyapi.com',
-        name: 'iKun资源'
-    },
-    // 下面是一些成人内容的API源，默认隐藏，使用本项目浏览黄色内容违背项目初衷
-    // ckzy: {
-    //     api: 'https://www.ckzy1.com',
-    //     name: 'CK资源',
-    //     adult: true
-    // },
-    // jkun: {
-    //     api: 'https://jkunzyapi.com',
-    //     name: 'jkun资源',
-    //     adult: true
-    // },
-    // bwzy: {
-    //     api: 'https://api.bwzym3u8.com',
-    //     name: '百万资源',
-    //     adult: true
-    // },
-    // souav: {
-    //     api: 'https://api.souavzy.vip',
-    //     name: 'souav资源',
-    //     adult: true
-    // },
-    // r155: {
-    //     api: 'https://155api.com',
-    //     name: '155资源',
-    //     adult: true
-    // },
-    // lsb: {
-    //     api: 'https://apilsbzy1.com',
-    //     name: 'lsb资源',
-    //     adult: true
-    // },
-    // huangcang: {
-    //     api: 'https://hsckzy.vip',
-    //     name: '黄色仓库',
-    //     adult: true,
-    //     detail: 'https://hsckzy.vip'
-    // },
-    // yutu: {
-    //     api: 'https://yutuzy10.com',
-    //     name: '玉兔资源',
-    //     adult: true
-    // },
 };
 
 // 添加聚合搜索的配置选项

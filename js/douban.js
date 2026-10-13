@@ -183,9 +183,9 @@ async function fillAndSearchWithDouban(title) {
         .replace(/"/g, '&quot;');
     
     // 确保豆瓣资源API被选中
-    if (typeof selectedAPIs !== 'undefined' && !selectedAPIs.includes('dbzy')) {
+    if (typeof selectedAPIs !== 'undefined' && !selectedAPIs.includes('bfzy')) {
         // 在设置中勾选豆瓣资源API复选框
-        const doubanCheckbox = document.querySelector('input[id="api_dbzy"]');
+        const doubanCheckbox = document.querySelector('input[id="api_bfzy"]');
         if (doubanCheckbox) {
             doubanCheckbox.checked = true;
             
@@ -194,7 +194,7 @@ async function fillAndSearchWithDouban(title) {
                 updateSelectedAPIs();
             } else {
                 // 如果函数不可用，则手动添加到selectedAPIs
-                selectedAPIs.push('dbzy');
+                selectedAPIs.push('bfzy');
                 localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
                 
                 // 更新选中API计数（如果有这个元素）
@@ -426,7 +426,7 @@ async function fetchDoubanData(url) {
 
     try {
         // 尝试直接访问（豆瓣API可能允许部分CORS请求）
-        const response = await fetch(PROXY_URL + encodeURIComponent(url), fetchOptions);
+        const response = await fetch(buildApiRequestUrl(url), fetchOptions);
         clearTimeout(timeoutId);
         
         if (!response.ok) {
@@ -496,7 +496,7 @@ function renderDoubanCards(data, container) {
             const originalCoverUrl = item.cover;
             
             // 2. 也准备代理URL作为备选
-            const proxiedCoverUrl = PROXY_URL + encodeURIComponent(originalCoverUrl);
+            const proxiedCoverUrl = buildApiRequestUrl(originalCoverUrl);
             
             // 为不同设备优化卡片布局
             card.innerHTML = `
